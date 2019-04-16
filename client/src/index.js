@@ -1,27 +1,33 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import createHistory from 'history/createBrowserHistory';
+import createSagaMiddleware from 'redux-saga'
 
-import {createStore} from 'redux';
+import {createStore, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
 import {composeWithDevTools} from 'redux-devtools-extension';
 
-import App from './App';
+import AppContainer from './AppContainer';
 import * as serviceWorker from './serviceWorker';
+
 import rootReducer from './rootReducer';
+import rootSaga from './rootSaga';
 
 import './index.css';
 
-const history = createHistory();
+const sagaMiddleware = createSagaMiddleware();
 
 const store = createStore(
-	rootReducer(history),
-	composeWithDevTools()
+	rootReducer,
+	composeWithDevTools(
+		applyMiddleware(sagaMiddleware),
+	)
 );
+
+sagaMiddleware.run(rootSaga)
 
 ReactDOM.render((
 	<Provider store={store}>
-		<App />
+		<AppContainer />
 	</Provider>
 ), document.getElementById('root'));
 
